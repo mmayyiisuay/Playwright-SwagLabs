@@ -1,0 +1,16 @@
+{
+  "name": "Playwright-SwagLabs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mmayyiisuay/Playwright-SwagLabs.git",
+  "author": "mmayyiisuay <natchasuaysaard@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.7"
+  },
+  "scripts": {},
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}
