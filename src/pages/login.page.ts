@@ -1,26 +1,27 @@
 import { Page, Locator, expect } from '@playwright/test';
+import { BasePage } from './base.page';
 
-export class LoginPage {
-  readonly page: Page;
+export class LoginPage extends BasePage {
   readonly appLogo: Locator;
   readonly usernameField: Locator;
   readonly passwordField: Locator;
   readonly loginButton: Locator;
   readonly errorMessageContainer: Locator;
+  readonly verifyURL: string;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
     this.appLogo = page.locator('.login_logo');
     this.usernameField = page.locator('#user-name');
     this.passwordField = page.locator('#password');
     this.loginButton = page.locator('[data-test="login-button"]');
     this.errorMessageContainer = page.locator('.error-message-container');
+    this.verifyURL = page.url();
   }
 
   async navigateTo() {
-    await this.page.goto('https://www.saucedemo.com/');
+    await this.page.goto('https://www.saucedemo.com/')
   }
-
   async isLoggedIn(): Promise<boolean> {
     return this.page.url() === 'https://www.saucedemo.com/inventory.html';
   }

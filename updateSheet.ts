@@ -1,48 +1,65 @@
 import { google } from 'googleapis';
 
 const auth = new google.auth.GoogleAuth({
-    keyFile: 'credentials.json', // ไฟล์ Credential JSON
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  keyFile: 'credentials.json',
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
 const sheets = google.sheets({ version: 'v4', auth });
+const spreadsheetId = '1Pjl3tV0VWmOk17KvUE7KzYOKZXlSU1SXFB-jiqsdizM';
 
-// ข้อมูล Google Sheets
-const spreadsheetId = '1Pjl3tV0VWmOk17KvUE7KzYOKZXlSU1SXFB-jiqsdizM'; // ใส่ ID ของ Google Sheets
-const sheetName = 'Login Page'; // ชื่อ Sheet
+interface TestResult {
+  id: string;
+  status: string;
+  sheetName: string;
+}
 
-/**
- * ฟังก์ชันอัปเดต Status ใน Google Sheets
- * @param results - ข้อมูลผลการทดสอบ
- */
-export async function updateStatus(results: Array<{ id: string; status: string }>): Promise<void> {
-    try {
-        // ดึงข้อมูลปัจจุบันใน Google Sheets
-        const res = await sheets.spreadsheets.values.get({
-            spreadsheetId,
-            range: `${sheetName}!B9:K`,
+export async function updateStatus(results: TestResult[]): Promise<void> {
+  try {
+    const resultsBySheet = results.reduce((acc, result) => {
+      if (!acc[result.sheetName]) {
+        acc[result.sheetName] = [];
+      }
+      acc[result.sheetName].push(result);
+      return acc;
+    }, {} as Record<string, TestResult[]>);
+
+    await Promise.all(
+      Object.entries(resultsBySheet).map(async ([sheetName, sheetResults]) => {
+        const response = await sheets.spreadsheets.values.get({
+          spreadsheetId,
+          range: `${sheetName}!B9:K`,
         });
 
-        const rows = res.data.values || []; 
+        const rows = response.data.values || [];
+        let updated = false;
 
-        rows.forEach((row) => {
-            const result = results.find((r) => r.id === row[1]); 
-            if (result) {
-                row[8] = result.status;
-            }
+        const idToRowIndex = new Map(
+          rows.map((row, index) => [row[1], index])
+        );
+
+        sheetResults.forEach(({ id, status }) => {
+          const rowIndex = idToRowIndex.get(id);
+          if (rowIndex !== undefined) {
+            rows[rowIndex][8] = status;
+            updated = true;
+          }
         });
 
-        await sheets.spreadsheets.values.update({
+        if (updated) {
+          return sheets.spreadsheets.values.update({
             spreadsheetId,
             range: `${sheetName}!B9:K`,
             valueInputOption: 'RAW',
-            requestBody: {
-                values: rows,
-            },
-        });
+            requestBody: { values: rows },
+          });
+        }
+      })
+    );
 
-        console.log('done');
-    } catch (err) {
-        console.error('error :', err);
-    }
+    console.log('Updated successfully');
+  } catch (err) {
+    console.error('Update failed:', err);
+    throw err; 
+  }
 }
