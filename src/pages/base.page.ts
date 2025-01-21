@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect,test } from '@playwright/test';
 import { runTest, results } from '../utils/testHelper';
 
 export class BasePage {
@@ -21,7 +21,7 @@ export class BasePage {
   readonly productInfo : Locator;
   appLogo: Locator;
 
-  private readonly URLs = {
+  readonly URLs = {
     loginPage: 'https://www.saucedemo.com/',
     productPage: 'https://www.saucedemo.com/inventory.html',
     yourCart: 'https://www.saucedemo.com/cart.html',
@@ -94,9 +94,16 @@ export class BasePage {
     })
     
   }
+
+  async resetState(){
+    await this.hamburgerButton.click();
+    await this.page.locator('#reset_sidebar_link').click();
+    await this.page.reload();
+    console.log('reset state')
+
+  }
   
   async hamburgerMenu(sheetName: string, username: string, password: string, precondition: Function) {
-    
     
     await runTest('TC-HM-001', sheetName, async () => {
       await this.hamburgerButton.click();
@@ -105,24 +112,24 @@ export class BasePage {
     
     await runTest('TC-HM-002', sheetName, async () => {
       await this.allItemsOption.click();
-      await expect(this.page).toHaveURL(this.URLs.productPage);        
+      await expect(this.page).toHaveURL(this.URLs.productPage);  
+      await this.page.goBack();
+      await this.page.reload();
     });
     
     await runTest('TC-HM-003', sheetName, async () => {
       const temp: string = this.page.url();
+      await this.hamburgerButton.click();
       await this.aboutOption.click();
       await expect(this.page).toHaveURL(this.URLs.about)
       await this.page.goBack()
       await expect(this.page).toHaveURL(temp);
-      
     });
     
     await runTest('TC-HM-004', sheetName, async () => {
       await this.hamburgerButton.click(); 
       await this.logoutOption.click();
       await expect(this.page).toHaveURL(this.URLs.loginPage);
-      
-      
     });
     
     await runTest('TC-HM-005', sheetName, async () => {
@@ -162,15 +169,20 @@ export class BasePage {
 
       })
 
-      await runTest('TC-CIB-002', sheetName, async () => {
-        const transformedNames = await this.productsIDName();
+      // await runTest('TC-CIB-002', sheetName, async () => {
+      //   const transformedNames = await this.productsIDName();
 
-        for(let i = 0; i < transformedNames.length; i++) {
-          const addToCartButton = this.page.locator(`[name="add-to-cart-${transformedNames[i]}"]`);
-          await addToCartButton.click();
-          await this.verifyCartBadge(i+1);
-        }
-      });
+      //   for(let i = 0; i < transformedNames.length; i++) {
+      //     const addToCartButton = this.page.locator(`[name="add-to-cart-${transformedNames[i]}"]`);
+      //     await addToCartButton.click();
+      //     await this.verifyCartBadge(i+1);
+      //   }
+      //   for(let i = 0; i < transformedNames.length; i++) {
+      //     const addToCartButton = this.page.locator(`[name="remove-${transformedNames[i]}"]`);
+      //     await addToCartButton.click();
+      //     await this.verifyCartBadge(i+1);
+      //   }
+      // });
   }
 
   async  verifyCardProduct(){

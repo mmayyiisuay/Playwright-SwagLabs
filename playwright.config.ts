@@ -11,7 +11,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     headless: false,
     launchOptions: {
-      slowMo: 100,
+      slowMo: 10,
     },
     contextOptions: {
       screen: {

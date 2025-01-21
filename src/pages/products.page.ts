@@ -1,15 +1,10 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Locator, expect } from '@playwright/test';
 import { LoginPage } from './login.page';
 
 export class ProductPage extends LoginPage {
   readonly sortButton: Locator;
   readonly addButton: Locator;
 
-  constructor(page: Page) {
-    super(page);
-    this.sortButton = page.locator('.product_sort_container');
-
-  }
 
   async precondition(username: string, password: string) {
     await this.page.goto('https://www.saucedemo.com/');
@@ -86,17 +81,27 @@ export class ProductPage extends LoginPage {
     }
   }
   
-  async verifyAddToCartButton(type: 'add' | 'remove' ): Promise<void> {
-    const transformedNames = await this.productsIDName();
-    let typebutton : string
-    if(type === 'add') {typebutton = 'add-to-cart-';} else typebutton = 'remove-';
-    for(let i = 0; i < transformedNames.length; i++) {
-      const addToCartButton = this.page.locator(`[name="${typebutton}${transformedNames[i]}"]`);
-      console.log(`Checking visibility of: ${addToCartButton}`);
-      await expect(addToCartButton).toBeVisible();
+  async verifyAddToCartButton(type: 'add' | 'remove'): Promise<void> {
+    const transformedNames = await this.productsIDName(); // Get product IDs
+    let typeButton: string;
+  
+    if (type === 'add') {
+      typeButton = 'add-to-cart-';
+    } else {
+      typeButton = 'remove-';
+      for (let i = 0; i < transformedNames.length; i++) {
+        const addToCartButton = this.page.locator(`[name="add-to-cart-${transformedNames[i]}"]`);
+        await addToCartButton.click();
+      }
     }
-    
+  
+    for (let i = 0; i < transformedNames.length; i++) {
+      const cartButton = this.page.locator(`[name="${typeButton}${transformedNames[i]}"]`);
+      console.log(`Checking visibility of: ${typeButton}${transformedNames[i]}`);
+      await expect(cartButton).toBeVisible();
+    }
   }
+  
 
   async getProductIdsFromLinks(): Promise<string[]> {
     const linkElements = this.page.locator('.inventory_item_img a');
