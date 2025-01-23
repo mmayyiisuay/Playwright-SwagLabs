@@ -82,7 +82,7 @@ export class ProductPage extends LoginPage {
   }
   
   async verifyAddToCartButton(type: 'add' | 'remove'): Promise<void> {
-    const transformedNames = await this.productsIDName(); // Get product IDs
+    const transformedNames = await this.productsIDName();
     let typeButton: string;
   
     if (type === 'add') {

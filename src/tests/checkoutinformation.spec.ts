@@ -1,6 +1,6 @@
 import { test, expect, chromium, Browser, BrowserContext, Page } from '@playwright/test';
 import { validUsers, invalidUsers } from '../test-data/user';
-import { CheckOut1 } from '../pages/checkout.page';
+import { CheckOut1 } from '../pages/checkoutinformation.page';
 import { updateStatus } from '../../updateSheet';
 import { runTest, results } from '../utils/testHelper';
 import { blankFristName,blanklastName,blankzip,successfully} from '../test-data/yourinformation';

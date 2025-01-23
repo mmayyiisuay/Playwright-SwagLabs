@@ -1,5 +1,5 @@
 import { Locator, Page, expect } from '@playwright/test';
-import { YourCartPage } from '../pages/yourcart.page';
+import { YourCartPage } from './yourcart.page';
 import { UserInformation } from '../test-data/yourinformation';
 
 
@@ -19,7 +19,7 @@ export class CheckOut1 extends YourCartPage {
         this.zipField = this.page.locator('#postal-code')
         this.cancelButton = this.page.locator('#cancel')
         this.continueButton = this.page.locator('#continue')
-
+        
     }
     
     
@@ -64,26 +64,26 @@ export class CheckOut1 extends YourCartPage {
     
     async caseFillInformation(userInformation: UserInformation[],type: string) {
         for (const user of userInformation) {
-          const { firstName, lastName, zip } = user;
-          console.log(firstName, lastName, zip);
-          await this.fillInformation(firstName, lastName, zip) 
-          await this.continueButton.click();
-          await this.checkErrorMessage(type)
+            const { firstName, lastName, zip } = user;
+            console.log(firstName, lastName, zip);
+            await this.fillInformation(firstName, lastName, zip) 
+            await this.continueButton.click();
+            await this.checkErrorMessage(type)
         }
-      }
-
+    }
+    
     async checkErrorMessage(errortype: string): Promise<void> {
-    if (errortype === "blankFristName" ) {
-        await expect(this.errorMessageContainer).toHaveText('Error: First Name is required');
-    }
-    else if (errortype === "blanklastName") {
-        await expect(this.errorMessageContainer).toHaveText('Error: Last Name is required');
-    }
-    else if (errortype === "blankzip") {
-        await expect(this.errorMessageContainer).toHaveText('Error: Postal Code is required');
-    }
-    else {}
-    
-    
+        if (errortype === "blankFristName" ) {
+            await expect(this.errorMessageContainer).toHaveText('Error: First Name is required');
+        }
+        else if (errortype === "blanklastName") {
+            await expect(this.errorMessageContainer).toHaveText('Error: Last Name is required');
+        }
+        else if (errortype === "blankzip") {
+            await expect(this.errorMessageContainer).toHaveText('Error: Postal Code is required');
+        }
+        else {}
+        
+        
     }
 }
