@@ -1,6 +1,6 @@
 # Automate Testing with Playwright + TypeScript
 
-**ct** is an **Automate Testing** implementation created as part of my **portfolio**. This project uses **Playwright** and **TypeScript** to perform end-to-end tests on the **Swag Labs** demo website ([https://www.saucedemo.com/](https://www.saucedemo.com/)). Additionally, the test results are automatically updated into a **Google Sheet** for tracking and management.
+**This repository** is an **Automate Testing** implementation created as part of my **portfolio**. This project uses **Playwright** and **TypeScript** to perform end-to-end tests on the **Swag Labs** demo website ([https://www.saucedemo.com/](https://www.saucedemo.com/)). Additionally, the test results are automatically updated into a **Google Sheet** for tracking and management.
 
 If you find any issues or have suggestions, feel free to reach out to me 🙇🏻‍♀️. I’m always open to feedback and improvements! 💖
 
